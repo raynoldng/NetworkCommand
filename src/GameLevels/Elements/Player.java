@@ -19,7 +19,7 @@ public class Player {
 	
 	public Player(int pPlayerNo, CampColor pColor, TankOptions pTankOptions) {
 		this.mPlayerNo = pPlayerNo;
-		this.mColor = pColor;
+		this.setmColor(pColor);
 		this.mTankOptions = pTankOptions;
 	}
 	
@@ -30,6 +30,17 @@ public class Player {
 	}
 	
 	
+	public CampColor getmColor() {
+		return mColor;
+	}
+
+
+
+	public void setmColor(CampColor mColor) {
+		this.mColor = mColor;
+	}
+
+
 	// INNER CLASSES
 	public enum TankOptions {
 		E100 (ResourceManager.gameTankBodyE100, ResourceManager.gameTankTurretE100),

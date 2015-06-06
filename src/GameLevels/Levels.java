@@ -17,9 +17,10 @@ public class Levels {
 	
 	public static final LevelDef[] AvailableLevels = new LevelDef[] {
 		new LevelDef(1, new CampDef[] {
-				new CampDef(CampColor.NEUTAL, 100, 100, 50),
-				new CampDef(CampColor.NEUTAL, 100, 400, 50),
-				new CampDef(CampColor.NEUTAL, 400, 100, 50)
+				new CampDef(CampColor.BLUE, 100, 100, 50),
+				new CampDef(CampColor.NEUTRAL, 100, 400, 50),
+				new CampDef(CampColor.NEUTRAL, 400, 100, 50),
+				new CampDef(CampColor.RED, 400, 240, 50)
 		}, new EdgeDef[] {
 				new EdgeDef(0, 1),
 				new EdgeDef(1, 2),

@@ -19,7 +19,7 @@ public abstract class ManagedScene extends Scene {
 	
 	public ManagedScene() {
 		this(0f);
-	}
+	} 
 	
 	//Constructor that sets the minimum length of the loading screen and sets hasLoadingScreen accordingly.
 	public ManagedScene(final float pLoadingScreenMinimumSecondsShown) {

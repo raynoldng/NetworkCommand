@@ -31,7 +31,40 @@ public class TankDetail {
 	
 	private TankDetail mTargetedEnemy;	// engaged tank detail if any
 	
-	private IUpdateHandler mITankMovement, mITankTurretRotation;
+	private IUpdateHandler mITankMovement = new IUpdateHandler() {
+		
+		@Override
+		public void reset() {}
+
+		@Override
+		public void onUpdate(float pSecondsElapsed) {
+			float m = (float) mEdge.getGradient();
+			float dX = (float) (mMOVEMENT_SPEED * pSecondsElapsed / Math.sqrt(1 + m * m));
+			float dY = dX * m;
+			
+			float nX = mTankBody.getX() + dX;
+			float nY = mTankBody.getY() + dY;
+			
+			mTankBody.setPosition(nX, nY);
+		}
+	};
+	
+	private IUpdateHandler mITankTurretRotation = new IUpdateHandler() {
+
+		@Override
+		public void onUpdate(float pSecondsElapsed) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void reset() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
+	
 	
 	//======================================
 	// CONSTUCTOR
@@ -62,5 +95,12 @@ public class TankDetail {
 	// METHODS
 	//=================================================
 	
+	public CampColor getTankDetailColor() {
+		return this.mPlayer.getmColor();
+	}
+
+	public int getmDetailStength() {
+		return mDetailStength;
+	}
 	
 }

@@ -219,7 +219,7 @@ public class ResourceManager extends Object {
 				.createFromAsset(gameTexturesAtlas, activity.getAssets(),
 						"KV2_turret.png");
 
-		/*
+		
 		gameTankBodyM6 = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTexturesAtlas, activity.getAssets(),
 						"M6_body.png");
@@ -248,7 +248,7 @@ public class ResourceManager extends Object {
 				.createFromAsset(gameTexturesAtlas, activity.getAssets(),
 						"tiger2_turret.png");
 
-		*/
+		
 		
 		gameCamps = BitmapTextureAtlasTextureRegionFactory
 				.createTiledFromAsset(gameTexturesAtlas, activity.getAssets(),

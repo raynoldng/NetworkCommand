@@ -3,6 +3,7 @@ package GameLevels.Elements;
 import java.util.ArrayList;
 
 import org.andengine.entity.sprite.TiledSprite;
+import org.andengine.entity.text.Text;
 
 import GameLevels.GameLevel;
 import Managers.ResourceManager;
@@ -23,6 +24,7 @@ public class Camp {
 	private Player mPlayer; // current player controlling the camp
 	
 	private TiledSprite mTiledCamp;
+	private Text mTextCampSize;
 	
 	
 	//=====================================================
@@ -35,14 +37,21 @@ public class Camp {
 		this.mColor = color;
 		this.mGameLevel = pGameLevel;
 		
+		this.mStrength = this.mSize;
+		
 		mIncidentEdges = new ArrayList<Edge>();
 		
 		// draw camp
 		mTiledCamp = new TiledSprite(mX, mY, ResourceManager.gameCamps, ResourceManager.getActivity().getVertexBufferObjectManager());
-		mTiledCamp.setCurrentTileIndex(0);
+		mTiledCamp.setCurrentTileIndex(color.mTileIndex);
+		
+		// draw text
+		mTextCampSize = new Text(mTiledCamp.getWidth()/2, mTiledCamp.getHeight()/2, ResourceManager.fontDefault32Bold, String.valueOf(mSize), ResourceManager.getActivity().getVertexBufferObjectManager());
+		
+		mTiledCamp.attachChild(mTextCampSize);
+		mTiledCamp.setZIndex(2);
 		
 		this.mGameLevel.attachChild(mTiledCamp);
-		this.mTiledCamp.setScale(0.3f); // random value
 	}
 	
 	//=====================================================
@@ -50,6 +59,50 @@ public class Camp {
 	//=====================================================
 	public void addEdge(Edge e) {
 		this.mIncidentEdges.add(e);
+	}
+	
+	public TankDetail sendTankDetail(int pDetailStrength, Edge pEdge) {
+		
+		if(mStrength < pDetailStrength) return null;
+		
+		TankDetail tankDetail = new TankDetail(this, pEdge, pDetailStrength, mPlayer, mGameLevel);
+		mStrength -= pDetailStrength;
+		updateText();
+		
+		return tankDetail;
+	}
+	
+	/**
+	 * @param tankDetail Tank detail in bound to camp
+	 * updates the camp strength and color if necessary
+	 */
+	public void recieveTankDetail(TankDetail tankDetail) {
+		
+		// update the strength and change camp color if strength goes negative
+		if(mColor == tankDetail.getTankDetailColor()) {
+			mStrength += tankDetail.getmDetailStength();
+		} else {
+			mStrength -= tankDetail.getmDetailStength();
+			if(mStrength < 0) {
+				// change sides
+				mStrength = Math.abs(mStrength);
+				changeColor(tankDetail.getTankDetailColor());
+			}
+		}
+		
+		updateText();
+	}
+	
+	private void changeColor(CampColor tankDetailColor) {
+		// TODO: hook for animation
+		mTiledCamp.setCurrentTileIndex(tankDetailColor.mTileIndex);
+	}
+
+	/**
+	 * called when the number of tanks in the camp change
+	 */
+	private void updateText() {
+		mTextCampSize.setText(String.valueOf(mTextCampSize));
 	}
 
 	

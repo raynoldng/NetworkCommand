@@ -3,6 +3,7 @@ package com.cslabs.networkcommand;
 import org.andengine.engine.Engine;
 import org.andengine.engine.FixedStepEngine;
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.camera.SmoothCamera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.WakeLockOptions;
@@ -11,6 +12,8 @@ import org.andengine.engine.options.resolutionpolicy.IResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.opengl.view.RenderSurfaceView;
 import org.andengine.ui.activity.BaseGameActivity;
+import org.andengine.util.debug.Debug;
+
 import GameLevels.GameLevel;
 import GameLevels.Levels;
 import Managers.ResourceManager;
@@ -25,6 +28,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.widget.FrameLayout;
+
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
@@ -68,7 +72,7 @@ public class NetworkCmdActivity extends BaseGameActivity {
 	public float cameraHeight;
 	public float actualWindowWidthInches;
 	public float actualWindowHeightInches;
-	public Camera mCamera;
+	public SmoothCamera mCamera;
 	
 	//ENGINE
 	
@@ -133,11 +137,14 @@ public class NetworkCmdActivity extends BaseGameActivity {
 				
 				//apply the height and width variables
 				mCamera.set(0f, 0f, cameraWidth, cameraHeight);
+				
+				// DEBUG:
+				Debug.i("NetworkCmdActivity", "Height: " + cameraHeight + " Width: " + cameraWidth);
 			}
 		};
 		
 		//create the Camera and EngineOptions
-		mCamera = new Camera(0, 0, 320, 240);
+		mCamera = new SmoothCamera(0, 0, cameraWidth, cameraHeight, 10, 10, (float) 0.1);
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, EngineFillResolutionPolicy, mCamera);
 		
 		//enable sounds
