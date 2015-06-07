@@ -2,6 +2,8 @@ package GameLevels.Elements;
 
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.util.debug.Debug;
+import org.andengine.util.math.MathUtils;
 
 import GameLevels.GameLevel;
 import Managers.ResourceManager;
@@ -11,8 +13,9 @@ public class TankDetail {
 	//=====================================
 	// CONSTANTS
 	//=====================================
-	private static final float mMOVEMENT_SPEED = 5f;
-	private static final float mTURRET_DEGREES_PER_SECOND= 5f;
+	private static final float mMOVEMENT_SPEED = 50f;
+	private static final float mTURRET_DEGREES_PER_SECOND = 50f;
+	private static final float mTIME_EPSILON = 0.25f;
 	
 	//=====================================
 	// VARIABLES
@@ -26,11 +29,25 @@ public class TankDetail {
 	private int mDetailStength;			// number of tanks in detail
 	private Player mPlayer;				// Player who controls the detail
 	
+	// movement
+	private final float mDestX;				// X coordinate of destination camp
+	private final float mDestY;				// Y coordinate of destination camp
+	private final float mDegreeToDestFromX;	// angle tank will be pointing towards
+	private final float mETA;				// estimate time of arrival
+	private float mElapsedTime;				// elapse time since deployment of detail
+	
+	// turret rotation
+	private final float mTurretAngleFromTank;	
+	private TankDetail mTargetedEnemy;			// engaged tank detail if any
+	
 	private final Sprite mTankBody;
 	private final Sprite mTankTurret;
 	
-	private TankDetail mTargetedEnemy;	// engaged tank detail if any
 	
+	
+	/**
+	 * Handles the movement of tank and listener when it reached destination
+	 */
 	private IUpdateHandler mITankMovement = new IUpdateHandler() {
 		
 		@Override
@@ -38,17 +55,27 @@ public class TankDetail {
 
 		@Override
 		public void onUpdate(float pSecondsElapsed) {
-			float m = (float) mEdge.getGradient();
-			float dX = (float) (mMOVEMENT_SPEED * pSecondsElapsed / Math.sqrt(1 + m * m));
-			float dY = dX * m;
 			
-			float nX = mTankBody.getX() + dX;
-			float nY = mTankBody.getY() + dY;
+			// see if we have reached destination
+			if(Math.abs(mElapsedTime - mETA) < mTIME_EPSILON) {
+				Debug.i("TankDetail" , "Destination reached");	// working
+			}
 			
-			mTankBody.setPosition(nX, nY);
+			mElapsedTime += pSecondsElapsed;
+			
+			float x = mTankBody.getX();
+			float y = mTankBody.getY();
+			
+			float dx = (float) (pSecondsElapsed * mMOVEMENT_SPEED * Math.cos(MathUtils.degToRad(mDegreeToDestFromX)));
+			float dy = (float) (pSecondsElapsed * mMOVEMENT_SPEED * Math.sin(MathUtils.degToRad(mDegreeToDestFromX)));
+			
+			mTankBody.setPosition(x + dx, y + dy);
 		}
 	};
 	
+	/**
+	 * Listener for detection of enemy tanks and handles rotation of turret if enemy spotted
+	 */
 	private IUpdateHandler mITankTurretRotation = new IUpdateHandler() {
 
 		@Override
@@ -78,17 +105,30 @@ public class TankDetail {
 		this.mPlayer = pPlayer;
 		this.mGameLevel = pGameLevel;
 		
+		// do the position and angle calculations
+		mElapsedTime = 0.0f;
+		mDestX = mEndCamp.getmX();
+		mDestY = mEndCamp.getmY();
+		mDegreeToDestFromX = MathUtils.radToDeg((float) Math.atan2(mDestY - mStartingCamp.getmY(), mDestX - mStartingCamp.getmX()));
+		mETA = (float) (pEdge.getWeight() / mMOVEMENT_SPEED);
+		
+		// initialize graphics
 		mTankBody = new Sprite(mStartingCamp.getmX(), mStartingCamp.getmY(), mPlayer.getTankOptions().getTankBodyTR(), ResourceManager.getActivity().getVertexBufferObjectManager());
-		mTankTurret = new Sprite(0, 0, mPlayer.getTankOptions().getTankTurretTR(), ResourceManager.getActivity().getVertexBufferObjectManager());
+		mTankTurret = new Sprite(mTankBody.getWidth()/2, mTankBody.getHeight()/2, mPlayer.getTankOptions().getTankTurretTR(), ResourceManager.getActivity().getVertexBufferObjectManager());
 		
-		mTankBody.registerUpdateHandler(mITankMovement);	// NOT INITIALISED YET
-		mTankTurret.registerUpdateHandler(mITankTurretRotation);
+		mTankBody.registerUpdateHandler(mITankMovement);	
+		//mTankTurret.registerUpdateHandler(mITankTurretRotation); // NOT INITIALISED YET
 		
-		mTankTurret.setAnchorCenterY(0.5f); // random value 
+		mTankTurret.setAnchorCenterY(0.75f); // preset value
 		mTankBody.attachChild(mTankTurret);
+		mTankBody.setScale(0.7f);
+		
+		// rotate the body, initialise pointing downwards
+		mTankBody.setRotation(mTankBody.getRotation() + 270 - mDegreeToDestFromX);
+		
 		
 		this.mGameLevel.attachChild(mTankBody);
-		this.mTankBody.setScale(0.3f); // random value
+		//this.mTankBody.setScale(0.3f); // random value
 	}
 	
 	//=================================================
