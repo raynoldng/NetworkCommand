@@ -36,8 +36,7 @@ public class GameLevel extends ManagedGameScene implements
 	// ==========================================
 	public final LevelDef mLevelDef;
 
-	public volatile List<Camp> mCamps = Collections
-			.synchronizedList(new ArrayList<Camp>());
+	public volatile List<Camp> mCamps;
 	public volatile List<Edge> mEdges;
 
 	public LinkedList<Player> mPlayers;
@@ -56,8 +55,8 @@ public class GameLevel extends ManagedGameScene implements
 	public GameLevel(final LevelDef pLevelDef) {
 		this.mLevelDef = pLevelDef;
 
-		// mCamps = Collections.synchronizedList(new ArrayList<Camp>());
-		mEdges = Collections.synchronizedList(new ArrayList<Edge>());
+		mCamps = new ArrayList<Camp>();
+		mEdges = new ArrayList<Edge>();
 	}
 
 	protected void addEdge(EdgeDef curEdge) {
