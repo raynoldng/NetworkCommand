@@ -21,6 +21,7 @@ import GameLevels.Elements.CampColor;
 import GameLevels.Elements.Edge;
 import GameLevels.Elements.Player;
 import GameLevels.Elements.Player.TankOptions;
+import GameLevels.Elements.TankDetail;
 import Managers.GameManager;
 import Managers.ResourceManager;
 
@@ -38,6 +39,7 @@ public class GameLevel extends ManagedGameScene implements
 
 	public volatile List<Camp> mCamps;
 	public volatile List<Edge> mEdges;
+	public volatile List<TankDetail> mTanks;
 
 	public LinkedList<Player> mPlayers;
 
@@ -57,6 +59,8 @@ public class GameLevel extends ManagedGameScene implements
 
 		mCamps = new ArrayList<Camp>();
 		mEdges = new ArrayList<Edge>();
+		mTanks = new ArrayList<TankDetail>();
+		//mTanks = Collections.synchronizedList(new ArrayList<TankDetail>());
 	}
 
 	protected void addEdge(EdgeDef curEdge) {
@@ -125,6 +129,9 @@ public class GameLevel extends ManagedGameScene implements
 		Camp test1 = mCamps.get(0);
 		test1.setmPlayer(P1);
 		test1.sendTankDetail(20, test1.getmIncidentEdges().get(0));
+		
+		// ensure that tank is added to link list
+		Debug.i(TAG, "No of tanks in the map: " + mTanks.size());
 
 		// END TEST sending a tank detail
 
